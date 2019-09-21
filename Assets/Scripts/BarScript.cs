@@ -19,7 +19,7 @@ public class BarScript : MonoBehaviour
         Move();
     }
 
-    // Performs move operations
+    // Performs move operations 
     void Move()
     {
         if (Input.GetKey(KeyCode.LeftArrow))
@@ -32,4 +32,11 @@ public class BarScript : MonoBehaviour
         }
 
     }
+
+    // called when the cube hits the floor
+    void OnCollisionEnter2D(Collision2D col)
+    {
+        Debug.Log("Hit collision on bar");
+    }
+
 }
