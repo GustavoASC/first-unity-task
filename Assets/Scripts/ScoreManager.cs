@@ -29,10 +29,16 @@ public class ScoreManager
 
     // Add points to the current score and returns the new score
     [MethodImpl(MethodImplOptions.Synchronized)]
-    public int AddPoints(int points)
+    public void AddPoints(int points)
     {
         this.score += points;
-        return score;
+    }
+
+    // Returns the player score
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    public int GetPoints()
+    {
+        return this.score;
     }
 
 

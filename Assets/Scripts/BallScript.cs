@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 // Class to manage ball movements within screen
@@ -8,7 +9,7 @@ public class BallScript : MonoBehaviour
 {
 
     // Ball Speed
-    public int ballSpeed = 3;
+    public float ballSpeed = 10f;
     /* Posição para movimentar o diamente para a esquerda */
     private const int LEFT = 1;
     /* Posição para movimentar o diamente para a direita */
@@ -19,15 +20,23 @@ public class BallScript : MonoBehaviour
     private const int DOWN = 4;
 
     /* Posição em que o diamante deve se movimentar na tela */
-    private int horizontalPosition;
+    public int horizontalPosition;
     /* Posição em que o diamante deve se movimentar na tela */
-    private int verticalPosition;
+    public int verticalPosition;
 
     public BallScript()
     {
         this.horizontalPosition = RIGHT;
         this.verticalPosition = UP;
     }
+
+    // Awakes this game object
+    private void Awake()
+    {
+        RenderScore();
+        RenderLives();
+    }
+
 
     // Update current ball position
     public void Update()
@@ -66,12 +75,12 @@ public class BallScript : MonoBehaviour
         }
         if (y <= 0)
         {
-            Debug.Log("Dead");
-            this.verticalPosition = UP;
+            DecrementLives();
+            RecreateBall();
+            Destroy(this.gameObject);
         }
     }
 
-    // called when the cube hits the floor
     void OnCollisionEnter2D(Collision2D col)
     {
         if (col.gameObject.tag == "Block")
@@ -82,39 +91,78 @@ public class BallScript : MonoBehaviour
             bool top = contactPoint.y > center.y;
             bool left = contactPoint.x < center.x;
             bool down = contactPoint.y < center.y;
-            if (right)
-            {
-                this.horizontalPosition = RIGHT;
-            }
             if (top)
             {
                 this.verticalPosition = UP;
-            }
-            if (left)
-            {
-                this.verticalPosition = LEFT;
             }
             if (down)
             {
                 this.verticalPosition = DOWN;
             }
+            if (right)
+            {
+                this.horizontalPosition = RIGHT;
+            }
+            if (left)
+            {
+                this.horizontalPosition = LEFT;
+            }
             UpdateScore(10);
             Destroy(col.gameObject);
-            Debug.Log("Right: " + right + " Top: " + top);
         }
         else
         {
-            Debug.Log("Hit collision on ball with bar object: " + col.gameObject.name);
+            this.verticalPosition = UP;
         }
-        this.verticalPosition = UP;
+    }
+
+    // Decrements and shows the player remaining lives
+    private void DecrementLives()
+    {
+        int remainingLives = GameManager.Get().DecrementLife();
+        if (remainingLives == 0)
+        {
+            SceneManager.LoadScene("GameOverScene");
+        }
+        else
+        {
+            RenderLives();
+        }
+    }
+
+    // Recreates a ball after a life is lost
+    private void RecreateBall()
+    {
+        GameObject bar = GameObject.Find("Bar");
+        Vector3 v = bar.transform.position;
+        float x = v.x;
+        float y = v.y + 0.2f;
+        float z = v.z;
+        Instantiate(this.gameObject, new Vector3(x, y, z), Quaternion.identity);
     }
 
     // Updates player score adding the specified number of points
     private void UpdateScore(int points)
     {
-        int current = ScoreManager.Get().AddPoints(points);
-        Text scoreInput = GameObject.Find("PlayerScoreInput").GetComponent<Text>();
-        scoreInput.text = current + "";
+        ScoreManager.Get().AddPoints(points);
+        RenderScore();
     }
+
+    // Renders on screen the number of remaining lives
+    private void RenderLives()
+    {
+        int lives = GameManager.Get().GetLives();
+        Text livesInput = GameObject.Find("PlayerLivesInput").GetComponent<Text>();
+        livesInput.text = lives + "";
+    }
+
+    // Renders on screen the player score
+    private void RenderScore()
+    {
+        int score = ScoreManager.Get().GetPoints();
+        Text scoreInput = GameObject.Find("PlayerScoreInput").GetComponent<Text>();
+        scoreInput.text = score + "";
+    }
+
 }
 
