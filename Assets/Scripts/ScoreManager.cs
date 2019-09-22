@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 // Class to manage player score
@@ -17,16 +18,18 @@ public class ScoreManager
     }
 
     // Returns the single manager instance
-    public ScoreManager Get()
+    public static ScoreManager Get()
     {
-        if (instance == null) {
+        if (instance == null)
+        {
             instance = new ScoreManager();
         }
         return instance;
     }
-    
+
     // Add points to the current score and returns the new score
-    public int addPoints(int points)
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    public int AddPoints(int points)
     {
         this.score += points;
         return score;

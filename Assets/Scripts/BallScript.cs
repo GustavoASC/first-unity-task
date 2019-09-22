@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 // Class to manage ball movements within screen
 public class BallScript : MonoBehaviour
@@ -77,30 +78,28 @@ public class BallScript : MonoBehaviour
         {
             Vector3 contactPoint = col.contacts[0].point;
             Vector3 center = col.collider.bounds.center;
-
             bool right = contactPoint.x > center.x;
             bool top = contactPoint.y > center.y;
-
-
+            bool left = contactPoint.x < center.x;
+            bool down = contactPoint.y < center.y;
             if (right)
             {
                 this.horizontalPosition = RIGHT;
             }
-            else
+            if (top)
             {
-                if (top)
-                {
-                    this.verticalPosition = UP;
-                }
-                else
-                {
-                    // bottom
-                    this.verticalPosition = DOWN;
-                }
+                this.verticalPosition = UP;
             }
-
+            if (left)
+            {
+                this.verticalPosition = LEFT;
+            }
+            if (down)
+            {
+                this.verticalPosition = DOWN;
+            }
+            UpdateScore(10);
             Destroy(col.gameObject);
-
             Debug.Log("Right: " + right + " Top: " + top);
         }
         else
@@ -110,5 +109,12 @@ public class BallScript : MonoBehaviour
         this.verticalPosition = UP;
     }
 
+    // Updates player score adding the specified number of points
+    private void UpdateScore(int points)
+    {
+        int current = ScoreManager.Get().AddPoints(points);
+        Text scoreInput = GameObject.Find("PlayerScoreInput").GetComponent<Text>();
+        scoreInput.text = current + "";
+    }
 }
 
