@@ -8,6 +8,8 @@ public class GameManager
 {
     // Remaining lives
     private int lives;
+    // Player name
+    public string playerName  { get; set; }
     // Singleton manager instance
     private static GameManager instance;
 
@@ -15,6 +17,7 @@ public class GameManager
     private GameManager()
     {
         this.lives = 3;
+        this.playerName = "";
     }
 
     // Returns the single manager instance

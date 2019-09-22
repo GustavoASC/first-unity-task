@@ -41,6 +41,7 @@ public class InfoFormCameraScript : MonoBehaviour
 
     private void StartGameScene()
     {
+        GameManager.Get().playerName = GameObject.Find("PlayerNameInputField").GetComponent<InputField>().text;
         SceneManager.LoadScene("GameScene");
     }
 }
