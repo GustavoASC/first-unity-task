@@ -33,6 +33,7 @@ public class BallScript : MonoBehaviour
     // Awakes this game object
     private void Awake()
     {
+        this.ballSpeed = GameManager.Get().ballSpeed;
         RenderScore();
         RenderLives();
     }
@@ -109,11 +110,26 @@ public class BallScript : MonoBehaviour
             }
             UpdateScore(10);
             Destroy(col.gameObject);
+            GameManager.Get().RemoveRemainingBlock();
+            WinGameIfAllDestroyed();
         }
         else
         {
             this.verticalPosition = UP;
         }
+    }
+
+    // Wins the game if every block is destroyed
+    private void WinGameIfAllDestroyed()
+    {
+        int remainingBlocks = GameManager.Get().remainingBlocks;
+        Debug.Log("Remaining: " + remainingBlocks);
+        if (remainingBlocks == 0)
+        {
+            GameManager.Get().winner = true;
+            SceneManager.LoadScene("EndScene");
+        }
+
     }
 
     // Decrements and shows the player remaining lives
@@ -122,7 +138,8 @@ public class BallScript : MonoBehaviour
         int remainingLives = GameManager.Get().DecrementLife();
         if (remainingLives == 0)
         {
-            SceneManager.LoadScene("GameOverScene");
+            GameManager.Get().winner = false;
+            SceneManager.LoadScene("EndScene");
         }
         else
         {

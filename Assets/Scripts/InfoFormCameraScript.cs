@@ -23,7 +23,7 @@ public class InfoFormCameraScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        SpaceRocketUtils.MoveRocketsUp();
     }
 
     private void UpdateStartGameButtonStatus(string content)
@@ -41,7 +41,38 @@ public class InfoFormCameraScript : MonoBehaviour
 
     private void StartGameScene()
     {
-        GameManager.Get().playerName = GameObject.Find("PlayerNameInputField").GetComponent<InputField>().text;
+        ConfigurePlayerName();
+        ConfigureDifficulty();
         SceneManager.LoadScene("GameScene");
     }
+
+    private void ConfigurePlayerName()
+    {
+        GameManager.Get().playerName = GameObject.Find("PlayerNameInputField").GetComponent<InputField>().text;
+    }
+
+    private void ConfigureDifficulty()
+    {
+        GameManager manager = GameManager.Get();
+        float difficulty = GameObject.Find("DifficultySlider").GetComponent<Slider>().value;
+        switch (difficulty)
+        {
+            case 3:
+                manager.lives = 6;
+                manager.ballSpeed = 7;
+                break;
+            case 2:
+                manager.lives = 6;
+                manager.ballSpeed = 6;
+                break;
+            case 1:
+                manager.lives = 10;
+                manager.ballSpeed = 4;
+                break;
+            default:
+                break;
+        }
+        Debug.Log("Lives: " + manager.lives);
+    }
+
 }

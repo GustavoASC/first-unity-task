@@ -11,6 +11,16 @@ public class GameOverCameraScript : MonoBehaviour
     void Start()
     {
         //
+        Text status = GameObject.Find("Status").GetComponent<Text>();
+        if (GameManager.Get().winner == true)
+        {
+            status.text = "Congrats!";
+        }
+        else
+        {
+            status.text = "Game Over";
+        }
+        //
         Text playerName = GameObject.Find("PlayerName").GetComponent<Text>();
         playerName.text = GameManager.Get().playerName;
         //
@@ -21,6 +31,6 @@ public class GameOverCameraScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        SpaceRocketUtils.MoveRocketsUp();
     }
 }
